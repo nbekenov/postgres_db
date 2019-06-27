@@ -8,7 +8,7 @@ unset https_proxy
 export PWD=/home/ec2-user
 export AWS_CONFIG_FILE=/home/ec2-user/.aws/config
 export HOME=/home/ec2-user
-SUBJECT="CNX Postgresql DB weekly backup"
+SUBJECT="Postgresql DB weekly backup"
 
 # Database credentials
 PG_HOST=
