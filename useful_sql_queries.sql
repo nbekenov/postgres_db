@@ -118,6 +118,20 @@ WHERE tgtdep.deptype = 'i'::"char" AND tgtobj.relkind = 'v'::"char"
 and srcobj.relname like '%redemptions_summary%';
 
 
+--Create read user
+CREATE ROLE read_access_role;
+-- grant  access to existing tables
+GRANT USAGE ON SCHEMA public TO read_access_role;
+GRANT SELECT ON ALL TABLES IN SCHEMA public TO read_access_role;
+-- Grant access to future tables
+ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT SELECT ON TABLES TO read_access_role;
+
+-- create a new user and add him to role
+CREATE USER read_user WITH PASSWORD 're@dus9r';
+GRANT CONNECT ON DATABASE "CXTWH" TO read_user;
+
+GRANT read_access_role to read_user;
+
 --Permissions
 ALTER DEFAULT PRIVILEGES 
     FOR ROLE some_role   -- Alternatively "FOR USER"
