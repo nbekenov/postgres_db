@@ -1,3 +1,7 @@
+
+--show Postgres version
+SELECT version();
+
 --list all tables
 select * from information_schema.tables;
 
@@ -46,6 +50,11 @@ SELECT pid, age(clock_timestamp(), query_start), usename, query
 FROM pg_stat_activity 
 WHERE query != '<IDLE>' AND query NOT ILIKE '%pg_stat_activity%' 
 ORDER BY query_start desc;
+
+--Clean space on the disk
+truncate table <table_name>;
+VACUUM FULL <table_name>;
+
 
 --SIZE of the table with size of the index
     SELECT
