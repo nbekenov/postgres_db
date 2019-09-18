@@ -2,6 +2,16 @@
 --show Postgres version
 SELECT version();
 
+--show uptime
+SELECT pg_postmaster_start_time();
+
+--number of connections
+select max_conn,used,res_for_super,max_conn-used-res_for_super res_for_normal 
+from 
+  (select count(*) used from pg_stat_activity) t1,
+  (select setting::int res_for_super from pg_settings where name=$$superuser_reserved_connections$$) t2,
+  (select setting::int max_conn from pg_settings where name=$$max_connections$$) t3
+
 --list all tables
 select * from information_schema.tables;
 
@@ -18,7 +28,7 @@ select l.pid,pga.query_start,relname ,pga.usename,mode,granted,pga.query
             on l.relation=c.oid
         join pg_stat_activity pga
             on pga.pid=l.pid
-    where relname like '%<table_name>%';
+    where relname like '%table_name%';
 
 ---PG-9
 select  pid, locktype, relation,relname, mode, granted,current_query 
@@ -95,6 +105,21 @@ SELECT idx.relname as table,
            AND idx.indexrelname not ilike '%slony%'
            AND idx.indexrelname not like 'sl\_%'
         ORDER BY bytes desc;
+
+--list all table's partitions
+ SELECT
+    nmsp_parent.nspname AS parent_schema,
+    parent.relname      AS parent,
+    nmsp_child.nspname  AS child_schema,
+    child.relname       AS child,
+	'drop table stg_001.' ||child.relname || ';' as sql_n
+FROM pg_inherits
+    JOIN pg_class parent            ON pg_inherits.inhparent = parent.oid
+    JOIN pg_class child             ON pg_inherits.inhrelid   = child.oid
+    JOIN pg_namespace nmsp_parent   ON nmsp_parent.oid  = parent.relnamespace
+    JOIN pg_namespace nmsp_child    ON nmsp_child.oid   = child.relnamespace
+WHERE parent.relname='custom_attributes'
+and nmsp_child.nspname='stg_001';
 
 --compare column types 
 select dm_ci360.column_name, migr_tmp_type,dm_ci360_type 
