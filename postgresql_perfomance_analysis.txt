@@ -1,0 +1,28 @@
+## 1. PostgreSQL Statistics Collector
+### PostgreSQL collects lots of data on its own and offers it via the pg_stat(io)_ system views
+The statistics gathered by the module are made available via a view named pg_stat_statements. (more info in https://www.postgresql.org/docs/current/pgstatstatements.html)
+Inorder to enable the module:
+in postgresql.conf
+shared_preload_libraries = 'pg_stat_statements'
+pg_stat_statements.track = all
+pg_stat_statements.max = 10000
+track_activity_query_size = 2048
+
+Then restart PostgreSQL. As a superuser from the psql console, run:
+CREATE extension pg_stat_statements;
+
+SELECT query, calls, total_time, rows, 100.0 * shared_blks_hit /
+               nullif(shared_blks_hit + shared_blks_read, 0) AS hit_percent
+          FROM pg_stat_statements ORDER BY total_time DESC LIMIT 5;
+
+## 2. pg_stat_plans: pg_stat_statements variant that differentiates between query plans
+https://github.com/2ndQuadrant/pg_stat_plans
+
+## 3. pg_activity is a top like application for PostgreSQL server activity monitoring.
+### Command line tool for PostgreSQL server activity monitoring.
+https://github.com/julmon/pg_activity
+
+## 4. PgHero is an open source PostgreSQL monitoring tool that was developed by Instacart. 
+### This project provides a dashboard that shows the health and performance of your PostgreSQL servers. 
+https://github.com/ankane/pghero
+
