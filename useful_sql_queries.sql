@@ -161,8 +161,8 @@ GRANT SELECT ON ALL TABLES IN SCHEMA public TO read_access_role;
 ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT SELECT ON TABLES TO read_access_role;
 
 -- create a new user and add him to role
-CREATE USER read_user WITH PASSWORD 're@dus9r';
-GRANT CONNECT ON DATABASE "CXTWH" TO read_user;
+CREATE USER read_user WITH PASSWORD '<password>';
+GRANT CONNECT ON DATABASE "DB_NAME" TO read_user;
 
 GRANT read_access_role to read_user;
 
